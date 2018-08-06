@@ -24,27 +24,25 @@ documentation{
     F{{gmailConnector}} Gmail connector
 }
 public type Client object {
-    public {
-        GmailConfiguration gmailConfig;
-        GmailConnector gmailConnector;
-    }
+    public GmailConfiguration gmailConfig;
+    public GmailConnector gmailConnector;
 
     documentation{
         Gets called when the gmail endpoint is beign initialized.
 
-        P{{gmailConfig}} Gmail connector configuration
+        P{{config}} Gmail connector configuration
     }
-    public function init(GmailConfiguration gmailConfig) {
-        gmailConfig.clientConfig.url = BASE_URL;
-        match gmailConfig.clientConfig.auth {
+    public function init(GmailConfiguration config) {
+        config.clientConfig.url = BASE_URL;
+        match config.clientConfig.auth {
             () => {}
             http:AuthConfig authConfig => {
                 authConfig.refreshUrl = REFRESH_TOKEN_EP;
-                authConfig.scheme = OAUTH;
+                authConfig.scheme = http:OAUTH2;
             }
         }
         self.gmailConnector = new;
-        self.gmailConnector.client.init(gmailConfig.clientConfig);
+        self.gmailConnector.client.init(config.clientConfig);
     }
 
     documentation{
@@ -62,6 +60,6 @@ documentation{
 
     F{{clientConfig}} The HTTP Client endpoint configuration
 }
-public type GmailConfiguration {
+public type GmailConfiguration record {
     http:ClientEndpointConfig clientConfig;
 };
